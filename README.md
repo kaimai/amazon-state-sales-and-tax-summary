@@ -73,16 +73,20 @@ Claude will guide you through the rest — no terminal or Python knowledge neede
 
 You can ask an AI assistant to run this tool on your behalf — no command line needed.
 
-1. Upload your order report file to the chat
-2. Paste this prompt:
+1. Upload your Amazon order report file to the chat
+2. Also upload `amazon_tax_summary.py` (download it from this repo), **or** paste the raw script URL so the AI can fetch it itself:
+   ```
+   https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/amazon_tax_summary.py
+   ```
+3. Paste this prompt:
 
-> I have an Amazon Seller Central order report (TSV). Please run `amazon_tax_summary.py` on it and give me back the Excel file with a detailed tab and a state-by-state sales summary tab. The script is at [link to this repo].
+> I've uploaded my Amazon Seller Central order report (TSV) and the script `amazon_tax_summary.py`. Please run the script on my order report and give me back the Excel file with a detailed tab and a state-by-state sales summary tab.
 
-The AI can download the script, install dependencies, run it against your file, and return the output Excel — all in one step.
+The AI will install any missing dependencies, run the script, and return the output Excel — all in one step.
 
-If you use **Claude** with the MCP filesystem tool or Claude Code, you can point it directly at a local file:
+If you use **Claude Code** with filesystem access, you can point it directly at local files instead of uploading:
 
-> Run `python amazon_tax_summary.py "/path/to/Amazon order report 2026 Jan.txt"` and open the output.
+> Download `amazon_tax_summary.py` from `https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/amazon_tax_summary.py`, then run it on `/path/to/Amazon order report 2026 Jan.txt`.
 
 ## Requirements
 
