@@ -37,7 +37,7 @@ Each processed month adds two tabs to the workbook:
 | Tab | Contents |
 |-----|----------|
 | `YYYYMM detailed` | All rows from the raw report, plus a computed **Sales Including Tax** column (`item-price + item-tax`) |
-| `YYYYMM summary` | Sales Including Tax aggregated by `ship-country` / `ship-state`, with all 52 US entries shown (50 states + DC + Puerto Rico), country subtotals, and a grand total |
+| `YYYYMM summary` | Sales Including Tax and Sales Tax aggregated by `ship-country` / `ship-state`, with all 52 US entries shown (50 states + DC + Puerto Rico), country subtotals, and a grand total |
 
 States with zero sales still appear in the summary with a `0.00` value.
 
@@ -53,17 +53,20 @@ Claude Code can run this tool for you automatically using the included skill. Th
 
 ---
 
-### Option A: Claude Desktop app
+### Option A: Claude Code on Claude Desktop
+
+Claude Desktop has a built-in **Claude Code** tab (a full coding assistant with filesystem access). No terminal required.
 
 1. Download and install [Claude Desktop](https://claude.ai/download)
-2. Open the folder where your order report is saved as a project in Claude Desktop
-3. Install the skill — paste this into the Claude Code chat:
+2. Open Claude Desktop and click the **Claude Code** tab
+3. Open the folder where your order report is saved as a project
+4. Install the skill — paste this into the Claude Code chat:
 
    ```bash
    mkdir -p .claude/skills/amazon-order-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-order-tax-summary/SKILL.md
    ```
 
-4. Then just say:
+5. Then just say:
 
    > Run my Amazon order tax summary for January 2026.
 

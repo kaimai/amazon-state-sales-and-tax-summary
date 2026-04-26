@@ -26,16 +26,16 @@ EXPECTED_DIR = FIXTURES / "expected"
 
 
 def read_summary_tab(xlsx_path: Path, tab_name: str) -> list[tuple]:
-    """Return all non-empty rows from a summary tab as (country, state, amount) tuples."""
+    """Return all non-empty rows from a summary tab as (country, state, sit, tax) tuples."""
     wb = openpyxl.load_workbook(xlsx_path)
     ws = wb[tab_name]
     rows = []
     for i, row in enumerate(ws.iter_rows(values_only=True)):
         if i == 0:
             continue  # skip header
-        country, state, amount = row[0], row[1], row[2]
+        country, state, sit, tax = row[0], row[1], row[2], row[3]
         if country is not None:
-            rows.append((country, state or "", round(float(amount), 2)))
+            rows.append((country, state or "", round(float(sit), 2), round(float(tax), 2)))
     return rows
 
 
@@ -44,8 +44,9 @@ def load_expected_csv(path: Path) -> list[tuple]:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            amt = round(float(row["SUM of Sales Including Tax"]), 2)
-            rows.append((row["ship-country"], row["ship-state"], amt))
+            sit = round(float(row["SUM of Sales Including Tax"]), 2)
+            tax = round(float(row["SUM of Sales Tax"]), 2)
+            rows.append((row["ship-country"], row["ship-state"], sit, tax))
     return rows
 
 
@@ -108,45 +109,55 @@ class TestJanuaryReport(unittest.TestCase):
 
     def test_all_52_us_entries_present(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        us_states = [s for c, s, _ in actual if c == "US"]
+        us_states = [s for c, s, sit, tax in actual if c == "US"]
         self.assertEqual(len(us_states), 52)
 
     def test_california_aggregated_from_abbrev_and_full_name(self):
         # Rows 1+2 use "CA", row 10 uses "CALIFORNIA" — all should sum to 475.50
         actual = read_summary_tab(self.out, "202601 summary")
-        ca = next(amt for c, s, amt in actual if c == "US" and s == "CA")
-        self.assertAlmostEqual(ca, 475.50, places=2)
+        ca_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "CA")
+        self.assertAlmostEqual(ca_sit, 475.50, places=2)
+        ca_tax = next(tax for c, s, sit, tax in actual if c == "US" and s == "CA")
+        self.assertAlmostEqual(ca_tax, 25.50, places=2)
 
     def test_maryland_normalized_from_full_name(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        md = next(amt for c, s, amt in actual if c == "US" and s == "MD")
-        self.assertAlmostEqual(md, 418.15, places=2)
+        md_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "MD")
+        self.assertAlmostEqual(md_sit, 418.15, places=2)
+        md_tax = next(tax for c, s, sit, tax in actual if c == "US" and s == "MD")
+        self.assertAlmostEqual(md_tax, 19.15, places=2)
 
     def test_puerto_rico_in_us_section(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        pr = next(amt for c, s, amt in actual if c == "US" and s == "PR")
-        self.assertAlmostEqual(pr, 100.00, places=2)
+        pr_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "PR")
+        self.assertAlmostEqual(pr_sit, 100.00, places=2)
 
     def test_cancelled_order_contributes_zero_to_summary(self):
         # WA had only a cancelled order → should be 0.00
         actual = read_summary_tab(self.out, "202601 summary")
-        wa = next(amt for c, s, amt in actual if c == "US" and s == "WA")
-        self.assertAlmostEqual(wa, 0.00, places=2)
+        wa_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "WA")
+        self.assertAlmostEqual(wa_sit, 0.00, places=2)
 
     def test_international_canada_grouped(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        ca_total = next(amt for c, s, amt in actual if c == "CA Total")
-        self.assertAlmostEqual(ca_total, 299.00, places=2)
+        ca_total_sit = next(sit for c, s, sit, tax in actual if c == "CA Total")
+        self.assertAlmostEqual(ca_total_sit, 299.00, places=2)
+        ca_total_tax = next(tax for c, s, sit, tax in actual if c == "CA Total")
+        self.assertAlmostEqual(ca_total_tax, 0.00, places=2)
 
     def test_us_total(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        us_total = next(amt for c, s, amt in actual if c == "US Total")
-        self.assertAlmostEqual(us_total, 1515.12, places=2)
+        us_total_sit = next(sit for c, s, sit, tax in actual if c == "US Total")
+        self.assertAlmostEqual(us_total_sit, 1515.12, places=2)
+        us_total_tax = next(tax for c, s, sit, tax in actual if c == "US Total")
+        self.assertAlmostEqual(us_total_tax, 87.12, places=2)
 
     def test_grand_total(self):
         actual = read_summary_tab(self.out, "202601 summary")
-        grand = next(amt for c, s, amt in actual if c == "Grand Total")
-        self.assertAlmostEqual(grand, 1814.12, places=2)
+        grand_sit = next(sit for c, s, sit, tax in actual if c == "Grand Total")
+        self.assertAlmostEqual(grand_sit, 1814.12, places=2)
+        grand_tax = next(tax for c, s, sit, tax in actual if c == "Grand Total")
+        self.assertAlmostEqual(grand_tax, 87.12, places=2)
 
 
 class TestAppendMode(unittest.TestCase):

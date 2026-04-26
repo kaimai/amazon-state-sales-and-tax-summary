@@ -105,7 +105,7 @@ def write_detailed_tab(ws, df: pd.DataFrame):
 
 
 def build_summary_rows(df: pd.DataFrame):
-    """Return list of (country, state, amount) rows for the summary tab."""
+    """Return list of (country, state, sales_incl_tax, sales_tax) rows for the summary tab."""
     work = df.copy()
     work['ship-country'] = work['ship-country'].fillna('').str.strip()
     work['ship-state'] = work['ship-state'].fillna('').str.strip()
@@ -115,56 +115,67 @@ def build_summary_rows(df: pd.DataFrame):
     work.loc[us_mask, 'ship-state'] = work.loc[us_mask, 'ship-state'].apply(normalize_us_state)
 
     rows = []
-    grand_total = 0.0
+    grand_sit = 0.0
+    grand_tax = 0.0
 
     # --- International groups ---
     intl = work[~us_mask].copy()
     for country in sorted(intl['ship-country'].unique()):
         country_df = intl[intl['ship-country'] == country]
-        country_total = 0.0
+        country_sit = 0.0
+        country_tax = 0.0
         for state in sorted(country_df['ship-state'].unique()):
-            amt = country_df[country_df['ship-state'] == state]['Sales Including Tax'].sum()
+            sdf = country_df[country_df['ship-state'] == state]
+            sit = sdf['Sales Including Tax'].sum()
+            tax = sdf['item-tax'].sum()
             state_label = state if state else '(blank)'
-            rows.append((country, state_label, amt))
-            country_total += amt
-        rows.append((f"{country} Total", '', country_total))
-        grand_total += country_total
+            rows.append((country, state_label, sit, tax))
+            country_sit += sit
+            country_tax += tax
+        rows.append((f"{country} Total", '', country_sit, country_tax))
+        grand_sit += country_sit
+        grand_tax += country_tax
 
     # --- US section ---
     us = work[us_mask].copy()
-    us_by_state = us.groupby('ship-state')['Sales Including Tax'].sum()
-    us_total = 0.0
+    us_sit = us.groupby('ship-state')['Sales Including Tax'].sum()
+    us_tax = us.groupby('ship-state')['item-tax'].sum()
+    us_total_sit = 0.0
+    us_total_tax = 0.0
     for state in ALL_US_STATE_ABBREVS:
-        amt = float(us_by_state.get(state, 0.0))
-        rows.append(('US', state, amt))
-        us_total += amt
-    rows.append(('US Total', '', us_total))
-    grand_total += us_total
+        sit = float(us_sit.get(state, 0.0))
+        tax = float(us_tax.get(state, 0.0))
+        rows.append(('US', state, sit, tax))
+        us_total_sit += sit
+        us_total_tax += tax
+    rows.append(('US Total', '', us_total_sit, us_total_tax))
+    grand_sit += us_total_sit
+    grand_tax += us_total_tax
 
-    rows.append(('Grand Total', '', grand_total))
+    rows.append(('Grand Total', '', grand_sit, grand_tax))
     return rows
 
 
 def write_summary_tab(ws, summary_rows):
-    header = ['ship-country', 'ship-state', 'SUM of Sales Including Tax']
+    header = ['ship-country', 'ship-state', 'SUM of Sales Including Tax', 'SUM of Sales Tax']
     ws.append(header)
     for cell in ws[1]:
         cell.font = BOLD
 
-    for country, state, amt in summary_rows:
-        ws.append([country, state, amt])
+    for country, state, sit, tax in summary_rows:
+        ws.append([country, state, sit, tax])
         row_idx = ws.max_row
-        # bold total/grand total rows
         is_total = str(country).endswith(' Total') or country == 'Grand Total'
         if is_total:
             for cell in ws[row_idx]:
                 cell.font = BOLD
-        # currency format on amount cell
         ws.cell(row=row_idx, column=3).number_format = CURRENCY_FMT
+        ws.cell(row=row_idx, column=4).number_format = CURRENCY_FMT
 
     ws.column_dimensions['A'].width = 15
     ws.column_dimensions['B'].width = 30
     ws.column_dimensions['C'].width = 22
+    ws.column_dimensions['D'].width = 20
 
 
 def main(input_path: str, append_to: str | None = None):
@@ -205,7 +216,7 @@ def main(input_path: str, append_to: str | None = None):
     ws_summary = wb.create_sheet(title=summary_tab_name)
     summary_rows = build_summary_rows(df)
     write_summary_tab(ws_summary, summary_rows)
-    us_state_rows = sum(1 for c, s, _ in summary_rows if c == 'US')
+    us_state_rows = sum(1 for c, s, sit, tax in summary_rows if c == 'US')
     print(f"Wrote '{summary_tab_name}' tab: {us_state_rows} US states")
 
     wb.save(out_path)
