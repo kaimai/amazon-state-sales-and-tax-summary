@@ -47,25 +47,54 @@ States with zero sales still appear in the summary with a `0.00` value.
 - Cancelled orders are included in the detailed tab (with `0.00` sales) to preserve a complete audit trail, but contribute nothing to the summary totals.
 - International orders are grouped by country above the US section in the summary tab.
 
-## Using as a Claude Skill (no coding required)
+## Using with Claude Code (no coding required)
 
-A Claude skill is included in `skill/SKILL.md`. Once installed, you can just say **"run my Amazon tax summary"** and Claude handles everything — finding the script, checking dependencies, asking for your file, running it, and reporting the results in plain English.
+Claude Code can run this tool for you automatically using the included skill. There are two ways to use Claude Code — pick whichever fits you.
 
-**Install the skill in Claude Code:**
+---
 
-```bash
-# From inside your Claude Code project
-mkdir -p .claude/skills/amazon-order-tax-summary
-curl -fsSL \
-  "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" \
-  -o .claude/skills/amazon-order-tax-summary/SKILL.md
-```
+### Option A: Claude Desktop app
 
-Then start a Claude Code session and say:
+1. Download and install [Claude Desktop](https://claude.ai/download)
+2. Open the folder where your order report is saved as a project in Claude Desktop
+3. Install the skill — paste this into the Claude Code chat:
 
-> Run my Amazon order tax summary for January 2026.
+   ```bash
+   mkdir -p .claude/skills/amazon-order-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-order-tax-summary/SKILL.md
+   ```
 
-Claude will guide you through the rest — no terminal or Python knowledge needed.
+4. Then just say:
+
+   > Run my Amazon order tax summary for January 2026.
+
+Claude will ask for your file path, run the script, and tell you where the output was saved.
+
+---
+
+### Option B: Claude Code in the terminal (CLI)
+
+1. Install Claude Code:
+
+   ```bash
+   npm install -g @anthropic-ai/claude-code
+   ```
+
+2. Open a terminal in the folder where your order report is saved:
+
+   ```bash
+   cd ~/Downloads
+   claude
+   ```
+
+3. Install the skill — paste this into the Claude Code session:
+
+   ```bash
+   mkdir -p .claude/skills/amazon-order-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-order-tax-summary/SKILL.md
+   ```
+
+4. Then say:
+
+   > Run my Amazon order tax summary for January 2026.
 
 ---
 
