@@ -47,6 +47,28 @@ States with zero sales still appear in the summary with a `0.00` value.
 - Cancelled orders are included in the detailed tab (with `0.00` sales) to preserve a complete audit trail, but contribute nothing to the summary totals.
 - International orders are grouped by country above the US section in the summary tab.
 
+## Using as a Claude Skill (no coding required)
+
+A Claude skill is included in `skill/SKILL.md`. Once installed, you can just say **"run my Amazon tax summary"** and Claude handles everything — finding the script, checking dependencies, asking for your file, running it, and reporting the results in plain English.
+
+**Install the skill in Claude Code:**
+
+```bash
+# From inside your Claude Code project
+mkdir -p .claude/skills/amazon-order-tax-summary
+curl -fsSL \
+  "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" \
+  -o .claude/skills/amazon-order-tax-summary/SKILL.md
+```
+
+Then start a Claude Code session and say:
+
+> Run my Amazon order tax summary for January 2026.
+
+Claude will guide you through the rest — no terminal or Python knowledge needed.
+
+---
+
 ## Using with an AI Chatbot (Claude, ChatGPT, etc.)
 
 You can ask an AI assistant to run this tool on your behalf — no command line needed.
