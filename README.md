@@ -51,8 +51,6 @@ States with zero sales still appear in the summary with a `0.00` value.
 
 Claude Code can run this tool for you automatically using the included skill. There are two ways to use Claude Code — pick whichever fits you.
 
----
-
 ### Option A: Claude Code on Claude Desktop
 
 Claude Desktop has a built-in **Claude Code** tab (a full coding assistant with filesystem access). No terminal required.
@@ -71,8 +69,6 @@ Claude Desktop has a built-in **Claude Code** tab (a full coding assistant with 
    > Run my Amazon order tax summary for January 2026.
 
 Claude will ask for your file path, run the script, and tell you where the output was saved.
-
----
 
 ### Option B: Claude Code in the terminal (CLI)
 
@@ -98,8 +94,6 @@ Claude will ask for your file path, run the script, and tell you where the outpu
 4. Then say:
 
    > Run my Amazon order tax summary for January 2026.
-
----
 
 ## Using with an AI Chatbot (Claude, ChatGPT, etc.)
 
