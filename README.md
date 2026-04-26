@@ -56,15 +56,10 @@ Claude Code can run this tool for you automatically using the included skill. Th
 Claude Desktop has a built-in **Claude Code** tab (a full coding assistant with filesystem access). No terminal required.
 
 1. Download and install [Claude Desktop](https://claude.ai/download)
-2. Open Claude Desktop and click the **Claude Code** tab
-3. Open the folder where your order report is saved as a project
-4. Install the skill — paste this into the Claude Code chat:
-
-   ```bash
-   mkdir -p .claude/skills/amazon-order-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-order-tax-summary/SKILL.md
-   ```
-
-5. Then just say:
+2. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md) from this repo
+3. Open Claude Desktop → **Customize** → **Skills** → click **+** → drag and drop `SKILL.md` to upload
+4. Open the folder where your order report is saved as a project in Claude Code
+5. Say:
 
    > Run my Amazon order tax summary for January 2026.
 
