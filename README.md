@@ -47,6 +47,21 @@ States with zero sales still appear in the summary with a `0.00` value.
 - Cancelled orders are included in the detailed tab (with `0.00` sales) to preserve a complete audit trail, but contribute nothing to the summary totals.
 - International orders are grouped by country above the US section in the summary tab.
 
+## Using with an AI Chatbot (Claude, ChatGPT, etc.)
+
+You can ask an AI assistant to run this tool on your behalf — no command line needed.
+
+1. Upload your order report file to the chat
+2. Paste this prompt:
+
+> I have an Amazon Seller Central order report (TSV). Please run `amazon_tax_summary.py` on it and give me back the Excel file with a detailed tab and a state-by-state sales summary tab. The script is at [link to this repo].
+
+The AI can download the script, install dependencies, run it against your file, and return the output Excel — all in one step.
+
+If you use **Claude** with the MCP filesystem tool or Claude Code, you can point it directly at a local file:
+
+> Run `python amazon_tax_summary.py "/path/to/Amazon order report 2026 Jan.txt"` and open the output.
+
 ## Requirements
 
 ```
