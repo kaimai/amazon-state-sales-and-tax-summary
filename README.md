@@ -47,25 +47,37 @@ States with zero sales still appear in the summary with a `0.00` value.
 - Cancelled orders are included in the detailed tab (with `0.00` sales) to preserve a complete audit trail, but contribute nothing to the summary totals.
 - International orders are grouped by country above the US section in the summary tab.
 
-## Using with Claude Code (no coding required)
+## Using with Claude (no coding required)
 
-Claude Code can run this tool for you automatically using the included skill. There are two ways to use Claude Code — pick whichever fits you.
+The skill works in Claude Chat, Claude Desktop, and the Claude Code CLI. Pick the option that fits you.
 
-### Option A: Claude Code on Claude Desktop
+### Option A: Claude Chat (easiest — no installation)
 
-Claude Desktop has a built-in **Claude Code** tab (a full coding assistant with filesystem access). No terminal required.
+Upload your order report files directly in any Claude chat session.
+
+1. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md) from this repo
+2. In [Claude Desktop](https://claude.ai/download) or [claude.ai](https://claude.ai), go to **Customize → Skills → +** and upload `SKILL.md`
+3. Start a new chat, upload your order report `.txt` file(s), and type:
+
+   > /amazon-order-tax-summary
+
+Claude reads the skill, processes all uploaded files, and returns an Excel workbook — no terminal, no local files needed.
+
+### Option B: Claude Code on Claude Desktop
+
+Claude Desktop's **Claude Code** tab has filesystem access, so it can read files from your Mac and save the output Excel directly to your Downloads folder.
 
 1. Download and install [Claude Desktop](https://claude.ai/download)
 2. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md) from this repo
 3. Open Claude Desktop → **Customize** → **Skills** → click **+** → drag and drop `SKILL.md` to upload
-4. Open the folder where your order report is saved as a project in Claude Code
+4. Open the **Claude Code** tab and open the folder where your order report is saved as a project
 5. Say:
 
    > Run my Amazon order tax summary for January 2026.
 
-Claude will ask for your file path, run the script, and tell you where the output was saved.
+Claude will ask for your file path, run the script, and save the Excel next to your input file.
 
-### Option B: Claude Code in the terminal (CLI)
+### Option C: Claude Code in the terminal (CLI)
 
 1. Install Claude Code:
 
@@ -92,7 +104,7 @@ Claude will ask for your file path, run the script, and tell you where the outpu
 
 ## Using with an AI Chatbot (Claude, ChatGPT, etc.)
 
-You can ask an AI assistant to run this tool on your behalf — no command line needed.
+You can also ask any AI assistant to run the script directly — no skill needed.
 
 1. Upload your Amazon order report file to the chat
 2. Also upload `amazon_tax_summary.py` (download it from this repo), **or** paste the raw script URL so the AI can fetch it itself:
