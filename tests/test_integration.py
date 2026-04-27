@@ -123,7 +123,7 @@ class TestJanuaryReport(unittest.TestCase):
     def test_maryland_normalized_from_full_name(self):
         actual = read_summary_tab(self.out, "202601 summary")
         md_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "MD")
-        self.assertAlmostEqual(md_sit, 418.15, places=2)
+        self.assertAlmostEqual(md_sit, 338.35, places=2)  # 399+19.15-79.80 promotion discount
         md_tax = next(tax for c, s, sit, tax in actual if c == "US" and s == "MD")
         self.assertAlmostEqual(md_tax, 19.15, places=2)
 
@@ -148,14 +148,14 @@ class TestJanuaryReport(unittest.TestCase):
     def test_us_total(self):
         actual = read_summary_tab(self.out, "202601 summary")
         us_total_sit = next(sit for c, s, sit, tax in actual if c == "US Total")
-        self.assertAlmostEqual(us_total_sit, 1515.12, places=2)
+        self.assertAlmostEqual(us_total_sit, 1435.32, places=2)
         us_total_tax = next(tax for c, s, sit, tax in actual if c == "US Total")
         self.assertAlmostEqual(us_total_tax, 87.12, places=2)
 
     def test_grand_total(self):
         actual = read_summary_tab(self.out, "202601 summary")
         grand_sit = next(sit for c, s, sit, tax in actual if c == "Grand Total")
-        self.assertAlmostEqual(grand_sit, 1814.12, places=2)
+        self.assertAlmostEqual(grand_sit, 1734.32, places=2)
         grand_tax = next(tax for c, s, sit, tax in actual if c == "Grand Total")
         self.assertAlmostEqual(grand_tax, 87.12, places=2)
 

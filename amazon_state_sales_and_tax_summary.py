@@ -76,13 +76,29 @@ def normalize_us_state(raw: str) -> str:
     return US_STATE_NAME_TO_ABBREV.get(upper, upper)
 
 
+_NUMERIC_COLS = (
+    'item-price', 'item-tax',
+    'shipping-price', 'shipping-tax',
+    'gift-wrap-price', 'gift-wrap-tax',
+    'item-promotion-discount', 'ship-promotion-discount',
+)
+
+
 def load_data(filepath: Path) -> pd.DataFrame:
     df = pd.read_csv(filepath, sep='\t', dtype=str)
     # strip trailing whitespace from column names (Amazon sometimes adds spaces)
     df.columns = [c.strip() for c in df.columns]
-    for col in ('item-price', 'item-tax'):
-        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
-    df['Sales Including Tax'] = df['item-price'] + df['item-tax']
+    for col in _NUMERIC_COLS:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
+        else:
+            df[col] = 0.0
+    df['Sales Including Tax'] = (
+        df['item-price'] + df['item-tax']
+        + df['shipping-price'] + df['shipping-tax']
+        + df['gift-wrap-price'] + df['gift-wrap-tax']
+        - df['item-promotion-discount'] - df['ship-promotion-discount']
+    )
     return df
 
 

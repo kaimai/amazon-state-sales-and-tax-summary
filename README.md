@@ -42,7 +42,7 @@ Each processed month adds two tabs to the workbook:
 
 | Tab | Contents |
 |-----|----------|
-| `YYYYMM detailed` | All rows from the raw report, plus a computed **Sales Including Tax** column (`item-price + item-tax`) |
+| `YYYYMM detailed` | All rows from the raw report, plus a computed **Sales Including Tax** column (`item-price + item-tax + shipping-price + shipping-tax + gift-wrap-price + gift-wrap-tax - item-promotion-discount - ship-promotion-discount`) |
 | `YYYYMM summary` | Sales Including Tax and Sales Tax aggregated by `ship-country` / `ship-state`, with all 52 US entries shown (50 states + DC + Puerto Rico), country subtotals, and a grand total |
 
 States with zero sales still appear in the summary with a `0.00` value.
@@ -55,14 +55,14 @@ States with zero sales still appear in the summary with a `0.00` value.
 | CA Total | | 299.00 | 0.00 |
 | US | AZ | 311.00 | 26.00 |
 | US | CA | 475.50 | 25.50 |
-| US | MD | 418.15 | 19.15 |
+| US | MD | 338.35 | 19.15 |
 | US | OH | 46.97 | 2.97 |
 | US | PR | 100.00 | 0.00 |
 | US | TX | 163.50 | 13.50 |
 | US | WA | 0.00 | 0.00 |
 | … (all 52 US entries) | | | |
-| US Total | | 1,515.12 | 87.12 |
-| Grand Total | | 1,814.12 | 87.12 |
+| US Total | | 1,435.32 | 87.12 |
+| Grand Total | | 1,734.32 | 87.12 |
 
 ## Notes
 
