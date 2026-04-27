@@ -2,6 +2,12 @@
 
 Aggregates Amazon Seller Central order data into a state-by-state sales and tax summary Excel workbook.
 
+## Why this exists
+
+If you sell on Amazon and use a sales tax filing service (Sidr.io, TaxJar, Avalara), you've likely hit this wall: they can't pull Amazon state-level totals automatically — Amazon doesn't expose order data through a clean API. Your tax service expects you to provide the state aggregates yourself.
+
+This tool generates exactly that: a state-by-state sales and tax breakdown from your Amazon Seller Central order export, ready to hand off to your tax filing service.
+
 ## Generating the Input File
 
 1. Log in to **Amazon Seller Central**
