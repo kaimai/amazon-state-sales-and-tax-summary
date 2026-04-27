@@ -4,7 +4,8 @@ Aggregates Amazon Seller Central order data into a state-by-state sales and tax 
 
 ## Generating the Input File
 
-1. Go to the [All Orders report page](https://sellercentral.amazon.com/reportcentral/FlatFileAllOrdersReport/1) in Amazon Seller Central (log in if prompted)
+1. Log in to **Amazon Seller Central**
+2. Go to **Reports → Fulfillment → All Orders** (or use this [direct link](https://sellercentral.amazon.com/reportcentral/FlatFileAllOrdersReport/1))
 3. Set date range type to **Order Date**
 4. Select the event range to cover the **whole month** (e.g. Jan 1 – Jan 31)
 5. Click **Request Report**, then download when ready
