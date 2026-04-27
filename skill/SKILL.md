@@ -1,19 +1,20 @@
 ---
-name: amazon-order-tax-summary
+name: amazon-state-sales-and-tax-summary
 description: >
-  Converts an Amazon Seller Central order report (TSV) into a formatted Excel
-  workbook with a detailed tab (all rows + Sales Including Tax column) and a
-  state-by-state tax summary tab (all 52 US entries + international groups).
-  Use this skill whenever the user wants to generate an Amazon order tax
-  summary, process an Amazon order report, or create a state sales summary
-  from Amazon data — even if they just say "run my Amazon report" or
-  "make the tax summary".
+  Aggregates Amazon Seller Central order data into a state-by-state sales and
+  tax summary Excel workbook. Produces a detailed tab (all rows + Sales
+  Including Tax column) and a summary tab (sales and tax totals by state/country,
+  all 52 US entries + international groups). Use this skill whenever the user
+  wants to generate an Amazon state sales and tax summary, process an Amazon
+  order report, or create a state-level breakdown from Amazon Seller Central
+  data — even if they just say "run my Amazon report" or "make the tax summary".
 ---
 
-# Amazon Order Tax Summary
+# Amazon State Sales and Tax Summary
 
-Generates an Excel tax summary from a raw Amazon Seller Central order report.
-Works for any Amazon seller. No coding required — just provide the input file.
+Aggregates Amazon Seller Central order data into a state-by-state sales and tax
+summary Excel workbook. Works for any Amazon seller. No coding required — just
+provide the input file.
 
 ---
 
@@ -36,12 +37,12 @@ Wait for the user to provide the path before continuing.
 
 ## Step 2: Locate the script
 
-Check if `amazon_tax_summary.py` is already available:
+Check if `amazon_state_sales_and_tax_summary.py` is already available:
 
 ```bash
 # Check common locations
-ls amazon_tax_summary.py 2>/dev/null || \
-ls ~/amazon-seller-tax-summary/amazon_tax_summary.py 2>/dev/null || \
+ls amazon_state_sales_and_tax_summary.py 2>/dev/null || \
+ls ~/amazon-state-sales-and-tax-summary/amazon_state_sales_and_tax_summary.py 2>/dev/null || \
 echo "NOT_FOUND"
 ```
 
@@ -51,9 +52,9 @@ echo "NOT_FOUND"
 
 ```bash
 curl -fsSL \
-  "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/amazon_tax_summary.py" \
-  -o /tmp/amazon_tax_summary.py
-SCRIPT=/tmp/amazon_tax_summary.py
+  "https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/amazon_state_sales_and_tax_summary.py" \
+  -o /tmp/amazon_state_sales_and_tax_summary.py
+SCRIPT=/tmp/amazon_state_sales_and_tax_summary.py
 ```
 
 Confirm download succeeded (non-zero file size) before continuing.
@@ -94,7 +95,7 @@ If B: note the desired path; after running, move the file there.
 Ask the user:
 
 > Is this a standalone month, or should I add it to an existing quarterly
-> workbook (e.g. `Amazon order tax summary - 2026 Q1.xlsx`)?
+> workbook (e.g. `Amazon state sales and tax summary - 2026 Q1.xlsx`)?
 >
 > A) Standalone — create a new file for this month
 > B) Add to an existing quarterly file — provide the path
@@ -124,7 +125,7 @@ Detected period: 202601
 Loaded 48 rows, 37 columns
 Wrote '202601 detailed' tab: 48 data rows
 Wrote '202601 summary' tab: 52 US states
-Saved: /path/to/Amazon order tax summary - 202601.xlsx
+Saved: /path/to/Amazon state sales and tax summary - 202601.xlsx
 ```
 
 If the script exits with an error, show the error message and stop.
@@ -146,18 +147,18 @@ wb = openpyxl.load_workbook("<OUTPUT_PATH>")
 ws = wb["<YYYYMM> summary"]
 for row in ws.iter_rows(values_only=True):
     if row[0] == "Grand Total":
-        print(f"Grand Total: ${row[2]:,.2f}")
+        print(f"Grand Total Sales: ${row[2]:,.2f}  |  Tax: ${row[3]:,.2f}")
         break
 ```
 
 Example response to user:
 
-> Done! Your tax summary is saved to:
-> `/Users/you/Downloads/Amazon order tax summary - 202601.xlsx`
+> Done! Your state sales and tax summary is saved to:
+> `/Users/you/Downloads/Amazon state sales and tax summary - 202601.xlsx`
 >
 > - **202601 detailed** — 48 rows (all orders including cancelled)
 > - **202601 summary** — 52 US state/territory rows + international groups
-> - **Grand Total: $18,277.88**
+> - **Grand Total Sales: $18,277.88  |  Tax: $1,542.30**
 >
 > Open the file to review. The summary tab shows every US state — states with
 > no orders show $0.00.

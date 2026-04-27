@@ -1,5 +1,5 @@
 """
-Integration tests for amazon_tax_summary.py.
+Integration tests for amazon_state_sales_and_tax_summary.py.
 
 Runs the script against fixture input files and compares output against
 expected CSV snapshots.
@@ -18,7 +18,7 @@ import pandas as pd
 
 # Make the root importable regardless of where pytest is invoked from
 sys.path.insert(0, str(Path(__file__).parent.parent))
-import amazon_tax_summary as ats
+import amazon_state_sales_and_tax_summary as ats
 
 FIXTURES = Path(__file__).parent / "fixtures"
 INPUT_DIR = FIXTURES / "input"

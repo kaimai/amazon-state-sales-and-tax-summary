@@ -1,6 +1,6 @@
-# Amazon Order Tax Summary
+# Amazon State Sales and Tax Summary
 
-Converts a raw Amazon order report (TSV) into a formatted Excel workbook with a detailed tab and a state-by-state tax summary tab.
+Aggregates Amazon Seller Central order data into a state-by-state sales and tax summary Excel workbook.
 
 ## Generating the Input File
 
@@ -16,16 +16,16 @@ Converts a raw Amazon order report (TSV) into a formatted Excel workbook with a 
 ### Single month — creates a new file
 
 ```bash
-python amazon_tax_summary.py "Amazon order report 2026 Jan.txt"
+python amazon_state_sales_and_tax_summary.py "Amazon order report 2026 Jan.txt"
 ```
 
-Output: `Amazon order tax summary - 202601.xlsx` in the same directory as the input.
+Output: `Amazon state sales and tax summary - 202601.xlsx` in the same directory as the input.
 
 ### Append a month to an existing workbook (e.g. a quarterly file)
 
 ```bash
-python amazon_tax_summary.py "Amazon order report 2026 Feb.txt" \
-    --append-to "Amazon order tax summary - 2026 Q1.xlsx"
+python amazon_state_sales_and_tax_summary.py "Amazon order report 2026 Feb.txt" \
+    --append-to "Amazon state sales and tax summary - 2026 Q1.xlsx"
 ```
 
 Running the same month twice safely overwrites the existing tabs for that period.
@@ -55,11 +55,11 @@ The skill works in Claude Chat, Claude Desktop, and the Claude Code CLI. Pick th
 
 Upload your order report files directly in any Claude chat session.
 
-1. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md) from this repo
+1. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/skill/SKILL.md) from this repo
 2. In [Claude Desktop](https://claude.ai/download) or [claude.ai](https://claude.ai), go to **Customize → Skills → +** and upload `SKILL.md`
 3. Start a new chat, upload your order report `.txt` file(s), and type:
 
-   > /amazon-order-tax-summary
+   > /amazon-state-sales-and-tax-summary
 
 Claude reads the skill, processes all uploaded files, and returns an Excel workbook — no terminal, no local files needed.
 
@@ -68,7 +68,7 @@ Claude reads the skill, processes all uploaded files, and returns an Excel workb
 Claude Desktop's **Claude Code** tab has filesystem access, so it can read files from your Mac and save the output Excel directly to your Downloads folder.
 
 1. Download and install [Claude Desktop](https://claude.ai/download)
-2. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md) from this repo
+2. Download [`skill/SKILL.md`](https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/skill/SKILL.md) from this repo
 3. Open Claude Desktop → **Customize** → **Skills** → click **+** → drag and drop `SKILL.md` to upload
 4. Open the **Claude Code** tab and open the folder where your order report is saved as a project
 5. Say:
@@ -95,7 +95,7 @@ Claude will ask for your file path, run the script, and save the Excel next to y
 3. Install the skill — paste this into the Claude Code session:
 
    ```bash
-   mkdir -p .claude/skills/amazon-order-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-order-tax-summary/SKILL.md
+   mkdir -p .claude/skills/amazon-state-sales-and-tax-summary && curl -fsSL "https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/skill/SKILL.md" -o .claude/skills/amazon-state-sales-and-tax-summary/SKILL.md
    ```
 
 4. Then say:
@@ -107,19 +107,19 @@ Claude will ask for your file path, run the script, and save the Excel next to y
 You can also ask any AI assistant to run the script directly — no skill needed.
 
 1. Upload your Amazon order report file to the chat
-2. Also upload `amazon_tax_summary.py` (download it from this repo), **or** paste the raw script URL so the AI can fetch it itself:
+2. Also upload `amazon_state_sales_and_tax_summary.py` (download it from this repo), **or** paste the raw script URL so the AI can fetch it itself:
    ```
-   https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/amazon_tax_summary.py
+   https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/amazon_state_sales_and_tax_summary.py
    ```
 3. Paste this prompt:
 
-> I've uploaded my Amazon Seller Central order report (TSV) and the script `amazon_tax_summary.py`. Please run the script on my order report and give me back the Excel file with a detailed tab and a state-by-state sales summary tab.
+> I've uploaded my Amazon Seller Central order report (TSV) and the script `amazon_state_sales_and_tax_summary.py`. Please run the script on my order report and give me back the Excel file with a detailed tab and a state-by-state sales summary tab.
 
 The AI will install any missing dependencies, run the script, and return the output Excel — all in one step.
 
 If you use **Claude Code** with filesystem access, you can point it directly at local files instead of uploading:
 
-> Download `amazon_tax_summary.py` from `https://raw.githubusercontent.com/kaimai/amazon-seller-tax-summary/main/amazon_tax_summary.py`, then run it on `/path/to/Amazon order report 2026 Jan.txt`.
+> Download `amazon_state_sales_and_tax_summary.py` from `https://raw.githubusercontent.com/kaimai/amazon-state-sales-and-tax-summary/main/amazon_state_sales_and_tax_summary.py`, then run it on `/path/to/Amazon order report 2026 Jan.txt`.
 
 ## Requirements
 
