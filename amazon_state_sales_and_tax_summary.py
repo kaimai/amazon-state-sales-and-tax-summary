@@ -34,6 +34,7 @@ US_STATE_NAME_TO_ABBREV = {
     "SOUTH CAROLINA": "SC", "SOUTH DAKOTA": "SD", "TENNESSEE": "TN", "TEXAS": "TX",
     "UTAH": "UT", "VERMONT": "VT", "VIRGINIA": "VA", "WASHINGTON": "WA",
     "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY",
+    "PUERTO RICO": "PR",
 }
 
 ALL_US_STATE_ABBREVS = sorted([
@@ -126,7 +127,12 @@ def build_summary_rows(df: pd.DataFrame):
     work['ship-country'] = work['ship-country'].fillna('').str.strip()
     work['ship-state'] = work['ship-state'].fillna('').str.strip()
 
-    # normalize US states
+    # Treat ship-country='PR' as US/PR (Amazon sometimes uses PR as the country code)
+    pr_country_mask = work['ship-country'].str.upper() == 'PR'
+    work.loc[pr_country_mask, 'ship-country'] = 'US'
+    work.loc[pr_country_mask, 'ship-state'] = 'PR'
+
+    # normalize US states (also handles ship-state='Puerto Rico' → 'PR')
     us_mask = work['ship-country'].str.upper() == 'US'
     work.loc[us_mask, 'ship-state'] = work.loc[us_mask, 'ship-state'].apply(normalize_us_state)
 

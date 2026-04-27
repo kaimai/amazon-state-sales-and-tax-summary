@@ -131,9 +131,50 @@ class TestJanuaryReport(unittest.TestCase):
         actual = read_summary_tab(self.out, "202601 summary")
         pr_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "PR")
         self.assertAlmostEqual(pr_sit, 100.00, places=2)
+        # PR must NOT appear as an international country
+        intl_countries = {c for c, s, sit, tax in actual if c not in ("US", "US Total", "Grand Total") and not c.endswith(" Total")}
+        self.assertNotIn("PR", intl_countries)
+
+
+class TestPuertoRicoNormalization(unittest.TestCase):
+    """ship-country='PR' and ship-state='Puerto Rico' must both land in US/PR."""
+
+    def _run(self, rows):
+        import tempfile, pandas as pd
+        tmp = tempfile.mkdtemp()
+        p = Path(tmp) / "Amazon order report 2026 Jan.txt"
+        pd.DataFrame(rows).to_csv(p, sep='\t', index=False)
+        ats.main(str(p))
+        out = Path(tmp) / "Amazon state sales and tax summary - 202601.xlsx"
+        return read_summary_tab(out, "202601 summary")
+
+    def test_ship_country_pr_treated_as_us_pr(self):
+        actual = self._run([{"amazon-order-id": "1", "item-price": "50.00", "item-tax": "0.00",
+                             "ship-state": "San Juan", "ship-country": "PR"}])
+        pr_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "PR")
+        self.assertAlmostEqual(pr_sit, 50.00, places=2)
+        intl = {c for c, s, sit, tax in actual if c not in ("US", "US Total", "Grand Total") and not c.endswith(" Total")}
+        self.assertNotIn("PR", intl)
+
+    def test_ship_state_puerto_rico_full_name(self):
+        actual = self._run([{"amazon-order-id": "2", "item-price": "75.00", "item-tax": "0.00",
+                             "ship-state": "Puerto Rico", "ship-country": "US"}])
+        pr_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "PR")
+        self.assertAlmostEqual(pr_sit, 75.00, places=2)
+
+
+class TestJanuaryReportTotals(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.mkdtemp()
+        cls.out = Path(cls.tmp) / "Amazon state sales and tax summary - 202601.xlsx"
+        import shutil
+        src = INPUT_DIR / "Amazon order report 2026 Jan.txt"
+        dst = Path(cls.tmp) / src.name
+        shutil.copy(src, dst)
+        ats.main(str(dst))
 
     def test_cancelled_order_contributes_zero_to_summary(self):
-        # WA had only a cancelled order → should be 0.00
         actual = read_summary_tab(self.out, "202601 summary")
         wa_sit = next(sit for c, s, sit, tax in actual if c == "US" and s == "WA")
         self.assertAlmostEqual(wa_sit, 0.00, places=2)
