@@ -73,7 +73,7 @@ Claude Desktop's **Claude Code** tab has filesystem access, so it can read files
 4. Open the **Claude Code** tab and open the folder where your order report is saved as a project
 5. Say:
 
-   > Run my Amazon order tax summary for January 2026.
+   > Run my Amazon state sales and tax summary for January 2026.
 
 Claude will ask for your file path, run the script, and save the Excel next to your input file.
 
@@ -100,7 +100,7 @@ Claude will ask for your file path, run the script, and save the Excel next to y
 
 4. Then say:
 
-   > Run my Amazon order tax summary for January 2026.
+   > Run my Amazon state sales and tax summary for January 2026.
 
 ## Using with an AI Chatbot (Claude, ChatGPT, etc.)
 
