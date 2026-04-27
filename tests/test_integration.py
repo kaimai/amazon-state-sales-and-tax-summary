@@ -54,7 +54,7 @@ class TestJanuaryReport(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.mkdtemp()
-        cls.out = Path(cls.tmp) / "Amazon order tax summary - 202601.xlsx"
+        cls.out = Path(cls.tmp) / "Amazon state sales and tax summary - 202601.xlsx"
         # Copy input to tmp so output lands next to it
         import shutil
         src = INPUT_DIR / "Amazon order report 2026 Jan.txt"
@@ -170,7 +170,7 @@ class TestAppendMode(unittest.TestCase):
 
         # First: create Jan file
         ats.main(str(dst))
-        jan_out = Path(tmp) / "Amazon order tax summary - 202601.xlsx"
+        jan_out = Path(tmp) / "Amazon state sales and tax summary - 202601.xlsx"
 
         # Simulate a Feb input with a single row
         feb_tsv = Path(tmp) / "Amazon order report 2026 Feb.txt"
@@ -193,7 +193,7 @@ class TestAppendMode(unittest.TestCase):
         dst = Path(tmp) / src.name
         shutil.copy(src, dst)
         ats.main(str(dst))
-        out = Path(tmp) / "Amazon order tax summary - 202601.xlsx"
+        out = Path(tmp) / "Amazon state sales and tax summary - 202601.xlsx"
 
         ats.main(str(dst), append_to=str(out))
 

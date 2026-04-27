@@ -214,7 +214,7 @@ def main(input_path: str, append_to: str | None = None):
     else:
         wb = Workbook()
         wb.remove(wb.active)
-        out_path = filepath.parent / f"Amazon order tax summary - {yyyymm}.xlsx"
+        out_path = filepath.parent / f"Amazon state sales and tax summary - {yyyymm}.xlsx"
 
     # Remove existing tabs for this period if re-running
     for name in (f"{yyyymm} detailed", f"{yyyymm} summary"):
