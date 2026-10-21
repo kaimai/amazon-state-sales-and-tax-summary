@@ -126,6 +126,21 @@ def build_summary_rows(df: pd.DataFrame):
     work = df.copy()
     work['ship-country'] = work['ship-country'].fillna('').str.strip()
     work['ship-state'] = work['ship-state'].fillna('').str.strip()
+    if 'currency' not in work.columns:
+        work['currency'] = ''
+    work['currency'] = work['currency'].fillna('').str.strip().str.upper()
+
+    # Drop blank-country rows that carry no money (e.g. orders with no ship data)
+    empty_mask = ((work['ship-country'] == '')
+                  & (work['Sales Including Tax'] == 0) & (work['item-tax'] == 0))
+    work = work[~empty_mask].copy()
+    work.loc[work['ship-country'] == '', 'ship-country'] = '(blank)'
+
+    # Non-USD orders are reported in their own currency and kept out of the Grand Total
+    foreign_mask = ~work['currency'].isin(['', 'USD'])
+    work.loc[foreign_mask, 'ship-country'] = (
+        work.loc[foreign_mask, 'ship-country'] + ' (' + work.loc[foreign_mask, 'currency'] + ')'
+    )
 
     # Treat ship-country='PR' as US/PR (Amazon sometimes uses PR as the country code)
     pr_country_mask = work['ship-country'].str.upper() == 'PR'
@@ -155,8 +170,9 @@ def build_summary_rows(df: pd.DataFrame):
             country_sit += sit
             country_tax += tax
         rows.append((f"{country} Total", '', country_sit, country_tax))
-        grand_sit += country_sit
-        grand_tax += country_tax
+        if not foreign_mask.loc[country_df.index].any():
+            grand_sit += country_sit
+            grand_tax += country_tax
 
     # --- US section ---
     us = work[us_mask].copy()

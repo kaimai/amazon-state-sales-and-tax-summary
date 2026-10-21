@@ -69,6 +69,8 @@ States with zero sales still appear in the summary with a `0.00` value.
 - Full state names in the raw report (e.g. `MARYLAND`, `CALIFORNIA`) are automatically converted to 2-letter abbreviations before aggregation.
 - Cancelled orders are included in the detailed tab (with `0.00` sales) to preserve a complete audit trail, but contribute nothing to the summary totals.
 - International orders are grouped by country above the US section in the summary tab.
+- Orders in a currency other than USD (e.g. `MXN`) are grouped as `<country> (<currency>)` with a subtotal in that currency, and are **not** included in the Grand Total. No currency conversion is performed.
+- Rows with no ship-country and no amounts are omitted from the summary (they remain in the detailed tab).
 
 ## Using with Claude (no coding required)
 
