@@ -201,6 +201,42 @@ class TestJanuaryReportTotals(unittest.TestCase):
         self.assertAlmostEqual(grand_tax, 87.12, places=2)
 
 
+class TestCurrencyAndBlankCountry(unittest.TestCase):
+    """Non-USD orders stay out of the Grand Total; empty blank-country rows are dropped."""
+
+    def _run(self, rows):
+        import tempfile, pandas as pd
+        tmp = tempfile.mkdtemp()
+        p = Path(tmp) / "Amazon order report 2026 Jul.txt"
+        pd.DataFrame(rows).to_csv(p, sep='\t', index=False)
+        ats.main(str(p))
+        out = Path(tmp) / "Amazon state sales and tax summary - 202607.xlsx"
+        return read_summary_tab(out, "202607 summary")
+
+    US_ROW = {"amazon-order-id": "2", "currency": "USD", "item-price": "100.00", "item-tax": "8.00",
+              "ship-state": "CA", "ship-country": "US"}
+
+    def test_non_usd_grouped_with_currency_label(self):
+        actual = self._run([{"amazon-order-id": "1", "currency": "MXN", "item-price": "5999.46",
+                             "item-tax": "", "ship-state": "DISTRITO FEDERAL", "ship-country": "MX"},
+                            self.US_ROW])
+        mx_total = next(sit for c, s, sit, tax in actual if c == "MX (MXN) Total")
+        self.assertAlmostEqual(mx_total, 5999.46, places=2)
+
+    def test_non_usd_excluded_from_grand_total(self):
+        actual = self._run([{"amazon-order-id": "1", "currency": "MXN", "item-price": "5999.46",
+                             "item-tax": "", "ship-state": "DISTRITO FEDERAL", "ship-country": "MX"},
+                            self.US_ROW])
+        grand_sit, grand_tax = next((sit, tax) for c, s, sit, tax in actual if c == "Grand Total")
+        self.assertAlmostEqual(grand_sit, 108.00, places=2)
+        self.assertAlmostEqual(grand_tax, 8.00, places=2)
+
+    def test_empty_blank_country_row_dropped(self):
+        actual = self._run([{"amazon-order-id": "S01-1", "quantity": "2"}, self.US_ROW])
+        countries = {c for c, s, sit, tax in actual}
+        self.assertEqual(countries, {"US", "US Total", "Grand Total"})
+
+
 class TestAppendMode(unittest.TestCase):
     def test_append_adds_new_month_tabs(self):
         tmp = tempfile.mkdtemp()
